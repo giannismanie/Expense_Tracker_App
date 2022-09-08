@@ -7,10 +7,10 @@ function renderExpenseItem(itemData) {
 function ExpensesList({ expenses }) {
   return (
     <FlatList 
-        data={expenses} 
-        renderItem={renderExpenseItem} 
-        keyExtractor={(item) => item.id} />
-  );
+      data={expenses} 
+      renderItem={renderExpenseItem} 
+      keyExtractor={(item) => item.id} />
+    );
 }
 
 export default ExpensesList;
