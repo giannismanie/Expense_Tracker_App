@@ -1,10 +1,13 @@
-import { useLayoutEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useContext, useLayoutEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import Button from "../components/ExpensesOutput/UI/Button";
 import IconButton from "../components/ExpensesOutput/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
+import { ExpensesContext } from "../store/expenses-context";
 
 function ManageExpenses({ route, navigation }) {
+  const expensesCtx = useContext(ExpensesContext);
+
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
 
@@ -16,6 +19,7 @@ function ManageExpenses({ route, navigation }) {
 
   function deleteExpense() {
     navigation.goBack();
+    expensesCtx.deleteExpense(editedExpenseId);
   }
 
   function cancelHandler() {
@@ -23,14 +27,19 @@ function ManageExpenses({ route, navigation }) {
   }
 
   function confirmHandler() {
+    if (isEditing) {
+      expensesCtx.updateExpense(editedExpenseId, { description: 'updated', amount: 19.87, date: new Date()});
+    } else {
+      expensesCtx.addExpense({description: 'ddf', amount: 19.87, date: new Date()});
+    }
     navigation.goBack();
   }
 
   return (
     <View style={styles.container}>
         <View style={styles.buttons}>
-            <Button style={styles.button} mode="flat" onPress={cancelHandler}>Cancel</Button>
-            <Button style={styles.button} onPress={confirmHandler}>{isEditing ? 'Update' : 'Add'}</Button>
+          <Button style={styles.button} mode="flat" onPress={cancelHandler}>Cancel</Button>
+          <Button style={styles.button} onPress={confirmHandler}>{isEditing ? 'Update' : 'Add'}</Button>
         </View>
       {isEditing && (
         <View style={styles.deleteContainer}>
@@ -44,25 +53,25 @@ function ManageExpenses({ route, navigation }) {
 export default ManageExpenses;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 24,
-        backgroundColor: GlobalStyles.colors.primary800
-    },
-    deleteContainer: {
-        marginTop: 16,
-        paddingTop: 8,
-        borderTopWidth: 2,
-        borderTopColor: GlobalStyles.colors.primary200,
-        alignItems: 'center'
-    },
-    buttons: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    button: {
-        minWidth: 120,
-        marginHorizontal: 8
-    }
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: GlobalStyles.colors.primary800
+  },
+  deleteContainer: {
+    marginTop: 16,
+    paddingTop: 8,
+    borderTopWidth: 2,
+    borderTopColor: GlobalStyles.colors.primary200,
+    alignItems: 'center'
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  button: {
+    minWidth: 120,
+    marginHorizontal: 8
+  }
 })
